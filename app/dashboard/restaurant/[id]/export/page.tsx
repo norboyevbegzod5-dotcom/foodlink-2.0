@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { notFound, redirect } from "next/navigation";
+import ExcelImport from "@/components/ExcelImport";
 
 export default async function ExportPage({
   params,
@@ -22,7 +23,7 @@ export default async function ExportPage({
   if (error || !r) notFound();
   if (r.owner_id !== user.id) redirect("/dashboard");
 
-  const cards = [
+  const exportCards = [
     {
       label: "Яндекс Еда — PDF",
       desc: "Анкета + меню с ценами для Яндекс Еда",
@@ -74,30 +75,42 @@ export default async function ExportPage({
   ];
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-zinc-900">Экспорт</h1>
-      <p className="mt-2 text-sm text-zinc-500">
-        Скачайте анкету и меню отдельно для каждого агрегатора.
-      </p>
-      <div className="mt-8 grid gap-4 sm:grid-cols-2">
-        {cards.map((c) => (
-          <a
-            key={c.href}
-            href={c.href}
-            className="flex items-center gap-4 rounded-xl border border-zinc-100 bg-white p-6 shadow-sm transition-colors hover:border-emerald-200 hover:bg-emerald-50/30"
-          >
-            <div
-              className={`flex h-12 w-12 items-center justify-center rounded-xl ${c.iconBg} ${c.iconColor}`}
+    <div className="space-y-10">
+      <section>
+        <h1 className="text-2xl font-bold text-zinc-900">Импорт меню</h1>
+        <p className="mt-2 text-sm text-zinc-500">
+          Загрузите товары и категории из Excel файла.
+        </p>
+        <div className="mt-6">
+          <ExcelImport restaurantId={id} />
+        </div>
+      </section>
+
+      <section>
+        <h2 className="text-2xl font-bold text-zinc-900">Экспорт</h2>
+        <p className="mt-2 text-sm text-zinc-500">
+          Скачайте анкету и меню отдельно для каждого агрегатора.
+        </p>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          {exportCards.map((c) => (
+            <a
+              key={c.href}
+              href={c.href}
+              className="flex items-center gap-4 rounded-xl border border-zinc-100 bg-white p-6 shadow-sm transition-colors hover:border-emerald-200 hover:bg-emerald-50/30"
             >
-              {c.icon}
-            </div>
-            <div>
-              <p className="font-semibold text-zinc-900">{c.label}</p>
-              <p className="text-xs text-zinc-500">{c.desc}</p>
-            </div>
-          </a>
-        ))}
-      </div>
+              <div
+                className={`flex h-12 w-12 items-center justify-center rounded-xl ${c.iconBg} ${c.iconColor}`}
+              >
+                {c.icon}
+              </div>
+              <div>
+                <p className="font-semibold text-zinc-900">{c.label}</p>
+                <p className="text-xs text-zinc-500">{c.desc}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
