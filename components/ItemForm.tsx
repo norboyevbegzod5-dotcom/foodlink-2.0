@@ -20,6 +20,11 @@ interface ItemData {
   package_code: string;
   barcode: string;
   with_marking: boolean;
+  weight_grams: number | null;
+  calories: number | null;
+  proteins: number | null;
+  fats: number | null;
+  carbs: number | null;
 }
 
 interface Category {
@@ -95,6 +100,11 @@ export default function ItemForm({
       package_code: form.package_code.trim() || null,
       barcode: form.barcode.trim() || null,
       with_marking: form.with_marking,
+      weight_grams: form.weight_grams,
+      calories: form.calories,
+      proteins: form.proteins,
+      fats: form.fats,
+      carbs: form.carbs,
     };
 
     let { error } = await supabase
@@ -289,6 +299,91 @@ export default function ItemForm({
               className={`${inputCls} resize-none`}
               placeholder="Описание позиции"
             />
+          </div>
+        </div>
+
+        {/* Weight and Nutrition section */}
+        <div className="rounded-xl border border-zinc-100 bg-white p-6 shadow-sm">
+          <h2 className="mb-5 text-lg font-semibold text-zinc-800">
+            Вес и пищевая ценность
+          </h2>
+
+          <div className="mb-4">
+            <label className="mb-1.5 block text-sm font-medium text-zinc-600">
+              Вес (граммы)
+            </label>
+            <input
+              type="number"
+              value={form.weight_grams ?? ""}
+              onChange={(e) =>
+                set("weight_grams", e.target.value ? Number(e.target.value) : null)
+              }
+              className={inputCls}
+              placeholder="0"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-zinc-600">
+                Калории (ккал)
+              </label>
+              <input
+                type="number"
+                step="0.1"
+                value={form.calories ?? ""}
+                onChange={(e) =>
+                  set("calories", e.target.value ? Number(e.target.value) : null)
+                }
+                className={inputCls}
+                placeholder="0"
+              />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-zinc-600">
+                Белки (г)
+              </label>
+              <input
+                type="number"
+                step="0.1"
+                value={form.proteins ?? ""}
+                onChange={(e) =>
+                  set("proteins", e.target.value ? Number(e.target.value) : null)
+                }
+                className={inputCls}
+                placeholder="0"
+              />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-zinc-600">
+                Жиры (г)
+              </label>
+              <input
+                type="number"
+                step="0.1"
+                value={form.fats ?? ""}
+                onChange={(e) =>
+                  set("fats", e.target.value ? Number(e.target.value) : null)
+                }
+                className={inputCls}
+                placeholder="0"
+              />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-zinc-600">
+                Углеводы (г)
+              </label>
+              <input
+                type="number"
+                step="0.1"
+                value={form.carbs ?? ""}
+                onChange={(e) =>
+                  set("carbs", e.target.value ? Number(e.target.value) : null)
+                }
+                className={inputCls}
+                placeholder="0"
+              />
+            </div>
           </div>
         </div>
 

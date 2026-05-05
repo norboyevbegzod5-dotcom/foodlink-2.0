@@ -26,6 +26,7 @@ export type Restaurant = {
   accounting_email: string | null;
   requisites: string | null;
   taxpayer_registration_code: string | null;
+  logo_path: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -52,4 +53,9 @@ export type MenuItem = {
   package_code?: string | null;
   barcode?: string | null;
   with_marking?: boolean | null;
+  weight_grams?: number | null;
+  calories?: number | null;
+  proteins?: number | null;
+  fats?: number | null;
+  carbs?: number | null;
 };

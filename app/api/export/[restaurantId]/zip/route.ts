@@ -13,6 +13,14 @@ const AGG_NAMES: Record<Aggregator, string> = {
   uzum: "uzum-tezkor",
 };
 
+function sanitizeFileName(name: string): string {
+  return name
+    .replace(/[<>:"/\\|?*\x00-\x1f]/g, "_")
+    .replace(/\s+/g, "_")
+    .trim()
+    .slice(0, 100);
+}
+
 export async function GET(
   request: Request,
   context: { params: Promise<{ restaurantId: string }> },
@@ -59,7 +67,7 @@ export async function GET(
             : it.price_uzum_tezkor,
         is_active: it.is_active,
         image_file: it.image_path
-          ? `images/${it.id}${extFromPath(it.image_path)}`
+          ? `images/${sanitizeFileName(it.name)}${extFromPath(it.image_path)}`
           : null,
       })),
     })),
@@ -89,7 +97,7 @@ export async function GET(
               if (!res.ok) continue;
               const buf = Buffer.from(await res.arrayBuffer());
               archive.append(buf, {
-                name: `images/${it.id}${extFromPath(it.image_path)}`,
+                name: `images/${sanitizeFileName(it.name)}${extFromPath(it.image_path)}`,
               });
             } catch {
               /* skip */

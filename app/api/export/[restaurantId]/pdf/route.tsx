@@ -3,7 +3,7 @@ import {
   RestaurantPdfDocument,
   type Aggregator,
 } from "@/lib/pdf/restaurant-document";
-import { menuImagePublicUrl } from "@/lib/public-url";
+import { menuImagePublicUrl, restaurantLogoPublicUrl } from "@/lib/public-url";
 import { createClient } from "@/lib/supabase/server";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { NextResponse } from "next/server";
@@ -50,6 +50,16 @@ export async function GET(
   const imageMap: Record<string, string> = {};
   const fetches: Promise<void>[] = [];
 
+  let logoDataUri: string | null = null;
+  const logoUrl = restaurantLogoPublicUrl(data.restaurant.logo_path);
+  if (logoUrl) {
+    fetches.push(
+      fetchImageAsDataUri(logoUrl).then((dataUri) => {
+        if (dataUri) logoDataUri = dataUri;
+      }),
+    );
+  }
+
   for (const cat of data.categories) {
     for (const item of cat.menu_items) {
       if (!item.image_path) continue;
@@ -70,6 +80,7 @@ export async function GET(
       categories={data.categories}
       aggregator={aggregator}
       imageMap={imageMap}
+      logoDataUri={logoDataUri}
     />,
   );
 

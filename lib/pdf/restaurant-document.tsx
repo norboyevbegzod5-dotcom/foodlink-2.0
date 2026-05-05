@@ -126,14 +126,22 @@ const AGG_LABELS: Record<Aggregator, string> = {
   uzum: "Uzum Tezkor",
 };
 
-function restaurantInfoPage(restaurant: Restaurant) {
+function restaurantInfoPage(restaurant: Restaurant, logoDataUri: string | null) {
   const branches = Array.isArray(restaurant.branch_addresses)
     ? restaurant.branch_addresses.join("; ")
     : "";
 
   return (
     <Page size="A4" style={styles.page}>
-      <Text style={styles.h1}>Foodlink — анкета ресторана</Text>
+      <View style={{ flexDirection: "row", alignItems: "flex-start", marginBottom: 16 }}>
+        {logoDataUri && (
+          // eslint-disable-next-line jsx-a11y/alt-text
+          <Image src={logoDataUri} style={{ width: 60, height: 60, marginRight: 16, objectFit: "contain" }} />
+        )}
+        <View style={{ flex: 1 }}>
+          <Text style={styles.h1}>Foodlink — анкета ресторана</Text>
+        </View>
+      </View>
       {field("Название", restaurant.name)}
       {field("Тип заведения", restaurant.establishment_type)}
       {field("Кухня", restaurant.cuisine_main)}
@@ -167,17 +175,19 @@ export function RestaurantPdfDocument({
   categories,
   aggregator,
   imageMap,
+  logoDataUri,
 }: {
   restaurant: Restaurant;
   categories: ExportCategory[];
   aggregator: Aggregator;
   imageMap: Record<string, string>;
+  logoDataUri: string | null;
 }) {
   const label = AGG_LABELS[aggregator];
 
   return (
     <Document>
-      {restaurantInfoPage(restaurant)}
+      {restaurantInfoPage(restaurant, logoDataUri)}
 
       <Page size="A4" style={styles.page}>
         <Text style={styles.h1}>Меню — {label}</Text>
@@ -274,6 +284,29 @@ export function RestaurantPdfDocument({
                       <View style={styles.detailCell}>
                         <Text style={styles.detailLabel}>Маркировка</Text>
                         <Text style={styles.detailValue}>Да</Text>
+                      </View>
+                    )}
+                    {ext.weight_grams != null && (
+                      <View style={styles.detailCell}>
+                        <Text style={styles.detailLabel}>Вес (г)</Text>
+                        <Text style={styles.detailValue}>
+                          {String(ext.weight_grams)}
+                        </Text>
+                      </View>
+                    )}
+                    {(ext.calories != null || ext.proteins != null || ext.fats != null || ext.carbs != null) && (
+                      <View style={styles.detailCell}>
+                        <Text style={styles.detailLabel}>КБЖУ</Text>
+                        <Text style={styles.detailValue}>
+                          {[
+                            ext.calories != null ? `${ext.calories} ккал` : null,
+                            ext.proteins != null ? `Б: ${ext.proteins}` : null,
+                            ext.fats != null ? `Ж: ${ext.fats}` : null,
+                            ext.carbs != null ? `У: ${ext.carbs}` : null,
+                          ]
+                            .filter(Boolean)
+                            .join(", ")}
+                        </Text>
                       </View>
                     )}
                   </View>

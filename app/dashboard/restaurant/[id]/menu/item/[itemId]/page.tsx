@@ -93,6 +93,11 @@ export default async function ItemDetailPage({
           package_code: item.package_code ?? "",
           barcode: item.barcode ?? "",
           with_marking: item.with_marking ?? false,
+          weight_grams: item.weight_grams ?? null,
+          calories: item.calories ?? null,
+          proteins: item.proteins ?? null,
+          fats: item.fats ?? null,
+          carbs: item.carbs ?? null,
         }}
         categories={categories}
         currency={r.currency}
